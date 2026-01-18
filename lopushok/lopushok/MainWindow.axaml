@@ -1,10 +1,131 @@
-<Window xmlns="https://github.com/avaloniaui"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:vm="using:lopushok.DTO"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="lopushok.MainWindow"
-        Title="�������"
-        >
-    Welcome to Avalonia!
+        Title="Лопушок - Продукты"
+        Icon="Avares://lopushok/Assets/lop.ico">
+    
+    <StackPanel Margin="10" Spacing="10">
+        <!-- Панель поиска и фильтров -->
+        <StackPanel Spacing="10">
+            <!-- Строка с элементами управления -->
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBox Name="SearchTextBox" 
+                         Width="300" 
+                         Watermark="Поиск"
+                         TextChanged="SearchTextBox_TextChanged"/>
+                <Button Content="Найтий" Click="Search_Click" Background="yellow"/>
+                <ComboBox Name="SortComboBox" 
+                          Width="180"
+                          SelectionChanged="SortComboBox_SelectionChanged">
+                    <ComboBoxItem>Без сортировки</ComboBoxItem>
+                    <ComboBoxItem>Название (А-Я)</ComboBoxItem>
+                    <ComboBoxItem>Название (Я-А)</ComboBoxItem>
+                    <ComboBoxItem>Стоимость ↑</ComboBoxItem>
+                    <ComboBoxItem>Стоимость ↓</ComboBoxItem>
+                </ComboBox>
+                
+                <ComboBox Name="FilterComboBox" 
+                          Width="180"
+                          SelectionChanged="FilterComboBox_SelectionChanged">
+                    <ComboBoxItem>Все типы</ComboBoxItem>
+                </ComboBox>
+                
+                <Button Content="Сбросить" 
+                        Click="ResetFiltersButton_Click"/>
+            </StackPanel>
+            
+            <!-- Панель навигации-->
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <Button Content="Материалы"/>
+                <Button Content="Поставщики"/>
+                <Button Content="Обновить" Click="RefreshButton_Click"/>
+            </StackPanel> 
+        </StackPanel>
+        
+        <!-- Список продуктов -->
+        <Border
+				Background="Red"
+				CornerRadius="10"
+				Padding="20"
+				Margin="20"
+				Width="850"
+				Height="600">
+            <ScrollViewer>
+            
+            <ListBox Name="ProductsItemsControl" SelectionChanged="ProductsItemsControl_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:product_list_layout_DTO">
+                        
+                        <Border Margin="0,0,0,10" 
+                                BorderBrush="#DDD" 
+                                BorderThickness="1" 
+                                CornerRadius="6"
+                                Padding="15">
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <!-- Изображение -->
+                                <Border Width="120" 
+                                        Height="120" 
+                                        Background="#F0F0F0"
+                                        CornerRadius="4">
+                                    <Image Source="{Binding getLogo}" 
+                                           Stretch="Uniform"/>
+                                </Border>
+                                
+                                <!-- Информация -->
+                                <StackPanel VerticalAlignment="Center">
+                                    <!-- Заголовок -->
+                                    <TextBlock Text="{Binding Product_Title}" 
+                                               FontSize="18" 
+                                               FontWeight="Bold"
+                                               Margin="0,0,0,5"/>
+                                    
+                                    <!-- Детали -->
+                                    <StackPanel Spacing="3">
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <TextBlock Text="Тип:" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Product_Type}"/>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <TextBlock Text="Артикул:" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Product_ArticleNumber}"/>
+                                        </StackPanel>
+                                        
+                                        <!-- Типы материалов -->
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <TextBlock Text="Материалы:" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding MaterialTypes}" 
+                                                       TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        
+                                       
+                                    </StackPanel>
+                                </StackPanel>
+                                
+                                <!-- Стоимость -->
+                                <StackPanel VerticalAlignment="Center" 
+                                            Margin="15,0,0,0">
+                                    <TextBlock Text="{Binding MinCostForAgent, StringFormat='{}${0:F2}'}" 
+                                               FontSize="24" 
+                                               FontWeight="Bold"
+                                               Foreground="Green"/>
+                                    <TextBlock Text="минимальная цена"
+                                               FontSize="11"
+                                               Foreground="#666"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            
+        </ScrollViewer>
+        </Border>
+        
+    </StackPanel>
 </Window>
