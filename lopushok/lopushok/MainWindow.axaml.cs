@@ -78,7 +78,7 @@ namespace lopushok
                     MaterialTypes = string.Join(", ", product.ProductMaterials
                         .Select(pm => pm.Material.Title))
                 })
-                .OrderBy(p => p.Product_Title)
+                .OrderByDescending(it=>it.Product_Id)
                 .ToList();
 
             return new ObservableCollection<product_list_layout_DTO>(products);
@@ -97,18 +97,68 @@ namespace lopushok
             }
         }
 
-
-
-        private void ApplyFilters()
+        // Обработчики событий
+        private void SearchTextBox_TextChanged(object? sender, TextChangedEventArgs e)
         {
-            if (!allProducts.Any()) return;
+            ApplyCombinedFilters();
+        }
 
-            var query = allProducts.AsEnumerable();
+        private void SortComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            ApplyCombinedFilters();
+        }
 
-            // Поиск
+        private void FilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            ApplyCombinedFilters();
+        }
+
+        private void ResetFiltersButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            SearchTextBox.Text = "";
+            SortComboBox.SelectedIndex = 0;
+            FilterComboBox.SelectedIndex = 0;
+            ApplyCombinedFilters();
+        }
+
+        private void RefreshButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            LoadData();
+
+        }
+
+        private void Search_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            ApplyCombinedFilters();
+        }
+
+        private void ProductsItemsControl_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            int id = ((product_list_layout_DTO)ProductsItemsControl.SelectedItem).Product_Id;
+            new ChangeProduct(id).Show();
+            Close();
+        }
+
+        private void Create_Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            new ChangeProduct().Show();
+            Close();
+        }
+
+        private void ApplyCombinedFilters()
+        {
+            if (!allProducts.Any())
+            {
+                filteredProducts.Clear();
+                return;
+            }
+
+            IEnumerable<product_list_layout_DTO> query = allProducts.AsEnumerable();
+
+            // 1. Поиск по ключевым полям
             if (!string.IsNullOrWhiteSpace(SearchTextBox.Text))
             {
-                var search = SearchTextBox.Text.ToLower();
+                string search = SearchTextBox.Text.ToLower();
                 query = query.Where(p =>
                     (p.Product_Title?.ToLower().Contains(search) ?? false) ||
                     (p.Product_ArticleNumber?.ToLower().Contains(search) ?? false) ||
@@ -117,25 +167,25 @@ namespace lopushok
                 );
             }
 
-            // Фильтрация по типу
+            // 2. Фильтрация по типу товара
             if (FilterComboBox.SelectedItem is string selectedType && selectedType != "Все типы")
             {
                 query = query.Where(p => p.Product_Type == selectedType);
             }
 
-            // Сортировка
-            if (SortComboBox.SelectedItem is string sortOption)
-            {
-                query = sortOption switch
-                {
-                    "Название (А-Я)" => query.OrderBy(p => p.Product_Title),
-                    "Название (Я-А)" => query.OrderByDescending(p => p.Product_Title),
-                    "Стоимость ↑" => query.OrderBy(p => p.MinCostForAgent),
-                    "Стоимость ↓" => query.OrderByDescending(p => p.MinCostForAgent),
-                    _ => query
-                };
-            }
+            // 3. Сортировка по индексу выбранного элемента
+            int selectedIndex = SortComboBox.SelectedIndex;
 
+            query = selectedIndex switch
+            {
+                1 => query.OrderBy(p => p.Product_Title ?? ""),           // "Название (А-Я)"
+                2 => query.OrderByDescending(p => p.Product_Title ?? ""), // "Название (Я-А)"
+                3 => query.OrderBy(p => p.MinCostForAgent),                // "Стоимость (по воз.)"
+                4 => query.OrderByDescending(p => p.MinCostForAgent),     // "Стоимость (по убыв.)"
+                _ => query // 0 ("Без сортировки") или любой другой индекс → без изменений
+            };
+
+            // 4. Обновление filteredProducts и интерфейса
             filteredProducts.Clear();
             foreach (var product in query)
             {
@@ -145,45 +195,5 @@ namespace lopushok
             ProductsItemsControl.ItemsSource = filteredProducts;
         }
 
-        // Обработчики событий
-        private void SearchTextBox_TextChanged(object? sender, TextChangedEventArgs e)
-        {
-            ApplyFilters();
-        }
-
-        private void SortComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilters();
-        }
-
-        private void FilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilters();
-        }
-
-        private void ResetFiltersButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            SearchTextBox.Text = "";
-            SortComboBox.SelectedIndex = 0;
-            FilterComboBox.SelectedIndex = 0;
-            ApplyFilters();
-        }
-
-        private void RefreshButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            LoadData();
-        }
-
-        private void Search_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-
-        }
-
-        private void ProductsItemsControl_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-           /* int id = (ProductsItemsControl.SelectedItem as product_list_layout_DTO).Product_Id;
-            new ChangeProduct().Show(this);
-            Close();*/
-        }
     }
 }

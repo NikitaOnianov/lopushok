@@ -24,8 +24,8 @@
                     <ComboBoxItem>Без сортировки</ComboBoxItem>
                     <ComboBoxItem>Название (А-Я)</ComboBoxItem>
                     <ComboBoxItem>Название (Я-А)</ComboBoxItem>
-                    <ComboBoxItem>Стоимость ↑</ComboBoxItem>
-                    <ComboBoxItem>Стоимость ↓</ComboBoxItem>
+                    <ComboBoxItem>Стоимость (по воз.)</ComboBoxItem>
+                    <ComboBoxItem>Стоимость (по убыв.)</ComboBoxItem>
                 </ComboBox>
                 
                 <ComboBox Name="FilterComboBox" 
@@ -36,6 +36,7 @@
                 
                 <Button Content="Сбросить" 
                         Click="ResetFiltersButton_Click"/>
+                
             </StackPanel>
             
             <!-- Панель навигации-->
@@ -43,6 +44,7 @@
                 <Button Content="Материалы"/>
                 <Button Content="Поставщики"/>
                 <Button Content="Обновить" Click="RefreshButton_Click"/>
+                <Button Content="Создать новый продукт" Click="Create_Button_Click"/>
             </StackPanel> 
         </StackPanel>
         
@@ -53,7 +55,7 @@
 				Padding="20"
 				Margin="20"
 				Width="850"
-				Height="600">
+				Height="500">
             <ScrollViewer>
             
             <ListBox Name="ProductsItemsControl" SelectionChanged="ProductsItemsControl_SelectionChanged">
@@ -76,7 +78,7 @@
                                 </Border>
                                 
                                 <!-- Информация -->
-                                <StackPanel VerticalAlignment="Center">
+                                <StackPanel VerticalAlignment="Center" Width="450">
                                     <!-- Заголовок -->
                                     <TextBlock Text="{Binding Product_Title}" 
                                                FontSize="18" 
@@ -107,7 +109,7 @@
                                 </StackPanel>
                                 
                                 <!-- Стоимость -->
-                                <StackPanel VerticalAlignment="Center" 
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" 
                                             Margin="15,0,0,0">
                                     <TextBlock Text="{Binding MinCostForAgent, StringFormat='{}${0:F2}'}" 
                                                FontSize="24" 

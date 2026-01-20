@@ -34,5 +34,8 @@ build_property.EnableCodeStyleSeverity =
 [C:/Users/VivoBook 15X/Desktop/Лопушок/lopushok/lopushok/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[C:/Users/VivoBook 15X/Desktop/Лопушок/lopushok/lopushok/ChangeProduct.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [C:/Users/VivoBook 15X/Desktop/Лопушок/lopushok/lopushok/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="lopushok.ChangeProduct"
+        Title="Продукт"
+		xmlns:vm="using:lopushok.Models">
+    <StackPanel>
+		<Image
+		Height="200"
+		Width="200"
+		Name="ImagePath"/>
+        <TextBox Name="title" Watermark="Название"/>
+        <TextBox Name="Article" Watermark="Артикул"/>
+        <TextBox Name="description" Watermark="Описание"/>
+        <NumericUpDown Value="" Width="150" Minimum="0" Name="price"/>
+        <ComboBox Name="Listtype" Width="300">
+			<ComboBox.ItemTemplate>
+				<DataTemplate x:DataType="vm:ProductType">
+					<StackPanel>
+						<TextBlock Text="{Binding Title}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Создать" Click="Button_Click"/>
+            <Button Content="Изменить продукт" Click="Button_Click_1"/>
+            <Button Content="Изменить фото" Click="Button_Click_2"/>
+            <Button Content="Удалить" Click="Button_Click_3"/>
+        </StackPanel>
+        <TextBlock Name="mes"/>
+    </StackPanel>
+</Window>
